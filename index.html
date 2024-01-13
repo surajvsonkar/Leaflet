@@ -49,15 +49,22 @@
             opacity: 0.7;
         }
 
-        @media (max-width: 991px) {
-            #map {
-                height: 75vh;
-                margin-top: 100px;
-                width: 100%;
-            }
+        .country-name {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
 
-            body {
-                padding: 5px;
+        @media (max-width: 991px) {
+            @media (max-width: 991px) {
+                #map {
+                    max-width: none; /* Remove max-width on smaller screens */
+                    width: 100%; /* Full width on smaller screens */
+                }
+
+                body {
+                    padding: 5px;
+                }
             }
         }
     </style>
@@ -68,6 +75,7 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet.control.layers.tree@1.1.0/L.Control.Layers.Tree.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
     <!-- Include allCountries.js and allCapitals.js here -->
     <script src="./data/allCountries.js"></script>
     <script src="./data/allCapitals.js"></script>
@@ -77,7 +85,9 @@
             maxBounds: [
                 [90, -180], // North West
                 [-90, 180]  // South East
-            ]
+            ],
+            attributionControl: false,
+            zoomControl: false // Disable automatic CSS positioning
         }).setView([0, 0], 2); // Set initial view to show the entire world
 
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -151,6 +161,15 @@
 
                 // Add the GeoJSON layer to the map
                 countryLayer.addTo(countryColorsLayer);
+
+                // Add a green marker with country name popup
+                var centroid = turf.centroid(countryFeature.geometry);
+                var marker = L.marker([centroid.geometry.coordinates[1], centroid.geometry.coordinates[0]], {
+                    icon: L.divIcon({
+                        className: 'country-name-marker',
+                        html: '<div class="country-name">' + country + '</div>'
+                    })
+                }).addTo(map);
             }
         });
 

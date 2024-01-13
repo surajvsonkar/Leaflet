@@ -13,12 +13,12 @@
     <style>
         body {
             margin: 0;
-            padding: 0;
+            padding: 10px;
         }
 
         #map {
             height: 100vh;
-            max-width: 600px;
+            max-width: 50%;
             margin: 0 auto;
         }
 
@@ -77,7 +77,7 @@
                 [90, -180], // North West
                 [-90, 180]  // South East
             ]
-        }).setView([20.5937, 78.9629], 4);
+        }).setView([0, 0], 2); // Set initial view to show the entire world
 
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -103,47 +103,85 @@
 
         Stamen_Watercolor.addTo(map);
 
-        // Array of countries you want to fill with red color
-        var selectedCountries = ['Afghanistan', 'Angola', 'Albania', 'United Kingdom', 'Canada', 'India', 'Pakistan', 'Nepal', 'Australia', 'Brazil', 'United States of America', 'France', 'Germany', 'Turkey', 'South Africa', 'Zimbabwe', 'Egypt', 'Argentina', 'Russia', 'China']; // Add more countries as needed
+        // Array of countries you want to fill with different colors
+        var countryColors = {
+            'Afghanistan': 'red',
+            'Angola': 'blue',
+            'Albania': 'green',
+            'United Kingdom': 'orange',
+            'Canada': 'purple',
+            'India': 'yellow',
+            'Pakistan': 'pink',
+            'Nepal': 'brown',
+            'Australia': 'cyan',
+            'Brazil': 'lime',
+            'United States of America': 'magenta',
+            'France': 'teal',
+            'Germany': 'violet',
+            'Turkey': 'indigo',
+            'South Africa': 'lavender',
+            'Zimbabwe': 'maroon',
+            'Egypt': 'olive',
+            'Argentina': 'navy',
+            'Russia': 'coral',
+            'China': 'gold'
+        };
 
-        // Create a layer group for city markers
-        var cityMarkers = L.layerGroup().addTo(map);
+        // Create a layer group for country colors
+        var countryColorsLayer = L.layerGroup().addTo(map);
 
-        selectedCountries.forEach(function (country) {
+        Object.keys(countryColors).forEach(function (country) {
             // Find the GeoJSON feature for the selected country
             var countryFeature = allCountries.features.find(function (feature) {
                 return feature.properties.name === country;
             });
 
             if (countryFeature) {
-                // Create a GeoJSON layer for the selected country and add it to the map
-                L.geoJSON(countryFeature, {
+                // Create a GeoJSON layer for the selected country
+                var countryLayer = L.geoJSON(countryFeature, {
                     style: {
-                        fillColor: 'red',
-                        weight: 0,
-                        opacity: 1,
-                        color: 'white',
+                        fillColor: countryColors[country],
+                        weight: 1, // Add white border
+                        color: 'white', // Border color
                         dashArray: '3',
                         fillOpacity: 0.7
                     }
-                }).addTo(map);
+                });
+
+                // Add the GeoJSON layer to the map
+                countryLayer.addTo(countryColorsLayer);
             }
         });
 
+        // Create a layer group for city names
+        var cityNamesLayer = L.layerGroup().addTo(map);
+
         // Function to add city markers
         function addCityMarker(country, city, coordinates) {
-            var marker = L.marker(coordinates.reverse())
+            // Create a marker for the specified city
+            var marker = L.marker(coordinates)
                 .bindPopup('City: ' + city + '<br>Country: ' + country);
-            cityMarkers.addLayer(marker);
-            return marker;
+
+            // Add the marker to the map
+            marker.addTo(map);
+
+            // Create a layer for the city name
+            var cityLayer = L.layerGroup();
+
+            // Add the marker to the city layer
+            cityLayer.addLayer(marker);
+
+            // Add city names layer to the control layer
+            cityNamesLayer.addLayer(cityLayer);
         }
 
         // Example of adding city markers
-        var exampleMarker = addCityMarker('India', 'Delhi', [28.6139, 77.2090]);
+        addCityMarker('France', 'Paris', [48.8566, 2.3522]);
+        addCityMarker('United Kingdom', 'London', [51.509865, -0.118092]);
 
-        // Add layer control for city markers
+        // Add layer control for city names
         var overlayMaps = {
-            "City Markers": cityMarkers
+            "City Names": cityNamesLayer,
         };
 
         L.control.layers(null, overlayMaps).addTo(map);

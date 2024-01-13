@@ -80,21 +80,38 @@
     <script src="./data/uaeStates.js"></script>
     <script src="./data/russia.js"></script>
     <script>
-        var map = L.map('map').setView([20.5937, 78.9629], 4);
+        var map = L.map('map', {
+            maxBounds: [
+                [90, -180], // North West
+                [-90, 180]  // South East
+            ]
+        }).setView([20.5937, 78.9629], 4);
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxBounds: [
+                [90, -180],
+                [-90, 180]
+            ]
         });
         osm.addTo(map)
 
         googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
             maxZoom: 20,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            maxBounds: [
+                [90, -180],
+                [-90, 180]
+            ]
         });
         googleStreets.addTo(map);
 
         googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             maxZoom: 20,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            maxBounds: [
+                [90, -180],
+                [-90, 180]
+            ]
         });
         googleSat.addTo(map);
 
@@ -103,7 +120,11 @@
             subdomains: 'abcd',
             minZoom: 1,
             maxZoom: 16,
-            ext: 'jpg'
+            ext: 'jpg',
+            maxBounds: [
+                [90, -180],
+                [-90, 180]
+            ]
         });
         Stamen_Watercolor.addTo(map);
 
@@ -135,7 +156,7 @@
             style: styleUK
         }).addTo(map);
 
-        var singaporeStates= L.geoJSON(singaporeStates, {
+        var singaporeStates = L.geoJSON(singaporeStates, {
             style: styleSingapore
         }).addTo(map);
 

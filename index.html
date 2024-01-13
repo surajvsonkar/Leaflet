@@ -8,7 +8,8 @@
     <title>GIS website for fiverr client</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.control.layers.tree@1.1.0/L.Control.Layers.Tree.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/leaflet.control.layers.tree@1.1.0/L.Control.Layers.Tree.min.css">
     <style>
         body {
             margin: 0;
@@ -66,21 +67,8 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet.control.layers.tree@1.1.0/L.Control.Layers.Tree.min.js"></script>
-    <script src="./data/line.js"></script>
-    <script src="./data/point.js"></script>
-    <script src="./data/polygon.js"></script>
-    <script src="./data/russia.js"></script>
-    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-    <script src="./data/usstates.js"></script>
-    <script src="./data/indianStates.js"></script>
-    <script src="./data/sriLanka.js"></script>
-    <script src="./data/australian-states.js"></script>
-    <script src="./data/franceStates.js"></script>
-    <script src="./data//uk.js"></script>
-    <script src="./data/egypt.js"></script>
-    <script src="./data/singaporeStates.js"></script>
-    <script src="./data/uaeStates.js"></script>
-    <script src="./data/russia.js"></script>
+    <!-- Include allCountries.js here -->
+    <script src="./data/allCountries.js"></script>
 
     <script>
         var map = L.map('map', {
@@ -94,12 +82,12 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        var googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        var googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
             maxZoom: 20,
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
         });
 
-        var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        var googleSat = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             maxZoom: 20,
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
         });
@@ -114,84 +102,38 @@
 
         Stamen_Watercolor.addTo(map);
 
-        var russianStates = L.geoJSON(russianStates, {
-            style: styleRussia
+        // Extract unique country names from allCountries
+        var allCountryNames = allCountries.features.map(function (feature) {
+            return feature.properties.name;
         });
 
-        var usStatesData = L.geoJSON(statesData, {
-            style: styleUSStates
+        // Array of countries you want to fill with red color
+        var selectedCountries = ['Afghanistan', 'Angola', 'Albania', 'United Kingdom']; // Add more countries as needed
+
+        var overlays = {
+            label: 'Highlights',
+            children: []
+        };
+
+        selectedCountries.forEach(function (country) {
+            // Create a filtered GeoJSON layer for each selected country
+            var countryLayer = L.geoJSON(allCountries, {
+                filter: function (feature, layer) {
+                    return feature.properties.name === country;
+                },
+                style: {
+                    fillColor: 'red',
+                    weight: 0,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: 0.7
+                }
+            });
+
+            overlays.children.push({ label: country, layer: countryLayer });
         });
 
-        var indianStates = L.geoJSON(indianStates, {
-            style: styleIndianStates
-        });
-
-        var sriLanka = L.geoJSON(sriLanka, {
-            style: styleSriLanka
-        });
-
-        var australianStates = L.geoJSON(australianStates, {
-            style: styleAustralia
-        });
-
-        var franceStates = L.geoJSON(franceStates, {
-            style: styleFrance
-        });
-
-        var ukStates = L.geoJSON(ukStates, {
-            style: styleUK
-        });
-
-        var singaporeStates = L.geoJSON(singaporeStates, {
-            style: styleSingapore
-        });
-
-        var egyptStates = L.geoJSON(egyptStates, {
-            style: styleEgypt
-        });
-
-        var uaeStates = L.geoJSON(uaeStates, {
-            style: styleUAE
-        });
-
-        // Add markers to specific layers
-        var newYorkMarker = L.marker([40.7128, -74.0060]).bindPopup("New York, USA");
-        var mumbaiMarker = L.marker([19.0760, 72.8777]).bindPopup("Mumbai, India");
-        var colomboMarker = L.marker([6.9271, 79.8612]).bindPopup("Colombo, Sri Lanka");
-        var brisbaneMarker = L.marker([-27.4698, 153.0251]).bindPopup("Brisbane, Australia");
-        var parisMarker = L.marker([48.8566, 2.3522]).bindPopup("Paris, France");
-        var singaporeMarker = L.marker([1.3521, 103.8198]).bindPopup("Singapore");
-        var cairoMarker = L.marker([30.0444, 31.2357]).bindPopup("Cairo, Egypt");
-        var dubaiMarker = L.marker([25.276987, 55.296249]).bindPopup("Dubai, UAE");
-        var londonMarker = L.marker([51.509865, -0.118092]).bindPopup("London, UK");
-        var moscowMarker = L.marker([55.7558, 37.6176]).bindPopup("Moscow, Russia");
-
-        // Add markers to corresponding layers
-        newYorkMarker.addTo(usStatesData);
-        mumbaiMarker.addTo(indianStates);
-        colomboMarker.addTo(sriLanka);
-        brisbaneMarker.addTo(australianStates);
-        parisMarker.addTo(franceStates);
-        singaporeMarker.addTo(singaporeStates);
-        cairoMarker.addTo(egyptStates);
-        dubaiMarker.addTo(uaeStates);
-        londonMarker.addTo(ukStates);
-        moscowMarker.addTo(russianStates);
-
-        // Add layers to the map
-        russianStates.addTo(map);
-        usStatesData.addTo(map);
-        indianStates.addTo(map);
-        sriLanka.addTo(map);
-        australianStates.addTo(map);
-        franceStates.addTo(map);
-        ukStates.addTo(map);
-        singaporeStates.addTo(map);
-        egyptStates.addTo(map);
-        uaeStates.addTo(map);
-
-
-        // Add base layers
         var baseLayers = {
             label: 'World &#x1f5fa;',
             children: [
@@ -202,144 +144,8 @@
             ]
         };
 
-        // Add overlays with tabs
-        var overlays = {
-            label: 'Highlights',
-            children: [
-                { label: 'Russia', layer: russianStates },
-                { label: 'USA', layer: usStatesData },
-                { label: 'India', layer: indianStates },
-                { label: 'Sri Lanka', layer: sriLanka },
-                { label: 'Australia', layer: australianStates },
-                { label: 'France', layer: franceStates },
-                { label: 'Singapore', layer: singaporeStates },
-                { label: 'Egypt', layer: egyptStates },
-                { label: 'UAE', layer: uaeStates },
-                { label: 'UK', layer: ukStates },
-            ]
-        }
-
         var layerControl = L.control.layers.tree(baseLayers, overlays).addTo(map);
-
-        function getColor(d) {
-            if (d > 1000) {
-                return 'red';
-            } else {
-                return 'red'; // You can use different colors for different density ranges
-            }
-        }
-
-        function styleRussia(feature) {
-            return {
-                fillColor: getColor(feature.properties.density),
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
-
-        function styleUSStates(feature) {
-            return {
-                fillColor: getColor(feature.properties.density),
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
-
-        function styleIndianStates(feature) {
-            return {
-                fillColor: getColor(feature.properties.density),
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
-
-        function styleSriLanka(feature) {
-            return {
-                fillColor: getColor(feature.properties.density),
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
-
-        function styleAustralia(feature) {
-            return {
-                fillColor: 'red',
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
-
-        function styleFrance(feature) {
-            return {
-                fillColor: 'red',
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
-
-        function styleUK(feature) {
-            return {
-                fillColor: 'red',
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
-
-        function styleSingapore(feature) {
-            return {
-                fillColor: getColor(feature.properties.density),
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
-
-        function styleEgypt(feature) {
-            return {
-                fillColor: 'red',
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
-
-        function styleUAE(feature) {
-            return {
-                fillColor: 'red',
-                weight: 0,
-                opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.7
-            };
-        }
     </script>
-
 </body>
 
 </html>

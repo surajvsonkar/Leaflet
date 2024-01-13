@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaflet Tutorial</title>
+    <title>GIS website for fiverr client</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.control.layers.tree@1.1.0/L.Control.Layers.Tree.min.css">
     <style>
         body {
             margin: 0;
@@ -64,6 +65,7 @@
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.control.layers.tree@1.1.0/L.Control.Layers.Tree.min.js"></script>
     <script src="./data/line.js"></script>
     <script src="./data/point.js"></script>
     <script src="./data/polygon.js"></script>
@@ -79,6 +81,7 @@
     <script src="./data/singaporeStates.js"></script>
     <script src="./data/uaeStates.js"></script>
     <script src="./data/russia.js"></script>
+
     <script>
         var map = L.map('map', {
             maxBounds: [
@@ -86,140 +89,137 @@
                 [-90, 180]  // South East
             ]
         }).setView([20.5937, 78.9629], 4);
+
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxBounds: [
-                [90, -180],
-                [-90, 180]
-            ]
-        });
-        osm.addTo(map)
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-        googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        var googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
             maxZoom: 20,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-            maxBounds: [
-                [90, -180],
-                [-90, 180]
-            ]
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
         });
-        googleStreets.addTo(map);
 
-        googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             maxZoom: 20,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-            maxBounds: [
-                [90, -180],
-                [-90, 180]
-            ]
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
         });
-        googleSat.addTo(map);
 
         var Stamen_Watercolor = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
             attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             subdomains: 'abcd',
             minZoom: 1,
             maxZoom: 16,
-            ext: 'jpg',
-            maxBounds: [
-                [90, -180],
-                [-90, 180]
-            ]
+            ext: 'jpg'
         });
+
         Stamen_Watercolor.addTo(map);
 
         var russianStates = L.geoJSON(russianStates, {
             style: styleRussia
-        }).addTo(map);
+        });
 
         var usStatesData = L.geoJSON(statesData, {
             style: styleUSStates
-        }).addTo(map);
+        });
 
         var indianStates = L.geoJSON(indianStates, {
             style: styleIndianStates
-        }).addTo(map);
+        });
 
         var sriLanka = L.geoJSON(sriLanka, {
             style: styleSriLanka
-        }).addTo(map);
+        });
 
         var australianStates = L.geoJSON(australianStates, {
             style: styleAustralia
-        }).addTo(map);
+        });
 
         var franceStates = L.geoJSON(franceStates, {
             style: styleFrance
-        }).addTo(map);
+        });
 
         var ukStates = L.geoJSON(ukStates, {
             style: styleUK
-        }).addTo(map);
+        });
 
         var singaporeStates = L.geoJSON(singaporeStates, {
             style: styleSingapore
-        }).addTo(map);
+        });
 
         var egyptStates = L.geoJSON(egyptStates, {
             style: styleEgypt
-        }).addTo(map);
+        });
 
         var uaeStates = L.geoJSON(uaeStates, {
             style: styleUAE
-        }).addTo(map);
+        });
 
+        // Add markers to specific layers
+        var newYorkMarker = L.marker([40.7128, -74.0060]).bindPopup("New York, USA");
+        var mumbaiMarker = L.marker([19.0760, 72.8777]).bindPopup("Mumbai, India");
+        var colomboMarker = L.marker([6.9271, 79.8612]).bindPopup("Colombo, Sri Lanka");
+        var brisbaneMarker = L.marker([-27.4698, 153.0251]).bindPopup("Brisbane, Australia");
+        var parisMarker = L.marker([48.8566, 2.3522]).bindPopup("Paris, France");
+        var singaporeMarker = L.marker([1.3521, 103.8198]).bindPopup("Singapore");
+        var cairoMarker = L.marker([30.0444, 31.2357]).bindPopup("Cairo, Egypt");
+        var dubaiMarker = L.marker([25.276987, 55.296249]).bindPopup("Dubai, UAE");
+        var londonMarker = L.marker([51.509865, -0.118092]).bindPopup("London, UK");
+        var moscowMarker = L.marker([55.7558, 37.6176]).bindPopup("Moscow, Russia");
+
+        // Add markers to corresponding layers
+        newYorkMarker.addTo(usStatesData);
+        mumbaiMarker.addTo(indianStates);
+        colomboMarker.addTo(sriLanka);
+        brisbaneMarker.addTo(australianStates);
+        parisMarker.addTo(franceStates);
+        singaporeMarker.addTo(singaporeStates);
+        cairoMarker.addTo(egyptStates);
+        dubaiMarker.addTo(uaeStates);
+        londonMarker.addTo(ukStates);
+        moscowMarker.addTo(russianStates);
+
+        // Add layers to the map
+        russianStates.addTo(map);
+        usStatesData.addTo(map);
+        indianStates.addTo(map);
+        sriLanka.addTo(map);
+        australianStates.addTo(map);
+        franceStates.addTo(map);
+        ukStates.addTo(map);
+        singaporeStates.addTo(map);
+        egyptStates.addTo(map);
+        uaeStates.addTo(map);
+
+
+        // Add base layers
         var baseLayers = {
-            "Satellite": googleSat,
-            "Google Map": googleStreets,
-            "Water Color": Stamen_Watercolor,
-            "OpenStreetMap": osm,
+            label: 'World &#x1f5fa;',
+            children: [
+                { label: 'Satellite', layer: googleSat },
+                { label: 'Google Map', layer: googleStreets },
+                { label: 'Water Color', layer: Stamen_Watercolor },
+                { label: 'OpenStreetMap', layer: osm }
+            ]
         };
 
+        // Add overlays with tabs
         var overlays = {
-            "Russia Choropleth": russianStates,
-            "US States Choropleth": usStatesData,
-            "India Choropleth": indianStates,
-            "Sri Lanka Choropleth": sriLanka,
-            "Australia Choropleth": australianStates,
-            "France Choropleth": franceStates,
-            "UK Choropleth": ukStates,
-            "Singapore Choropleth": singaporeStates,
-            "Egypt Choropleth": egyptStates,
-            "UAE Choropleth": uaeStates // Adding UAE to the overlay
-        };
+            label: 'Highlights',
+            children: [
+                { label: 'Russia', layer: russianStates },
+                { label: 'USA', layer: usStatesData },
+                { label: 'India', layer: indianStates },
+                { label: 'Sri Lanka', layer: sriLanka },
+                { label: 'Australia', layer: australianStates },
+                { label: 'France', layer: franceStates },
+                { label: 'Singapore', layer: singaporeStates },
+                { label: 'Egypt', layer: egyptStates },
+                { label: 'UAE', layer: uaeStates },
+                { label: 'UK', layer: ukStates },
+            ]
+        }
 
-        L.control.layers(baseLayers, overlays).addTo(map);
-
-        var newYorkMarker = L.marker([40.7128, -74.0060]).addTo(map);
-        newYorkMarker.bindPopup("New York, USA");
-
-        var mumbaiMarker = L.marker([19.0760, 72.8777]).addTo(map);
-        mumbaiMarker.bindPopup("Mumbai, India");
-
-        var colomboMarker = L.marker([6.9271, 79.8612]).addTo(sriLanka);
-        colomboMarker.bindPopup("Colombo, Sri Lanka");
-
-        var brisbaneMarker = L.marker([-27.4698, 153.0251]).addTo(australianStates);
-        brisbaneMarker.bindPopup("Brisbane, Australia");
-
-        var parisMarker = L.marker([48.8566, 2.3522]).addTo(franceStates);
-        parisMarker.bindPopup("Paris, France");
-
-        var singaporeMarker = L.marker([1.3521, 103.8198]).addTo(singaporeStates);
-        singaporeMarker.bindPopup("Singapore");
-
-        var cairoMarker = L.marker([30.0444, 31.2357]).addTo(egyptStates);
-        cairoMarker.bindPopup("Cairo, Egypt");
-
-        var dubaiMarker = L.marker([25.276987, 55.296249]).addTo(uaeStates);
-        dubaiMarker.bindPopup("Dubai, UAE");
-
-        // Adding markers for London and Moscow
-        var londonMarker = L.marker([51.509865, -0.118092]).addTo(map);
-        londonMarker.bindPopup("London, UK");
-
-        var moscowMarker = L.marker([55.7558, 37.6176]).addTo(map);
-        moscowMarker.bindPopup("Moscow, Russia");
+        var layerControl = L.control.layers.tree(baseLayers, overlays).addTo(map);
 
         function getColor(d) {
             if (d > 1000) {
@@ -339,6 +339,7 @@
             };
         }
     </script>
+
 </body>
 
 </html>

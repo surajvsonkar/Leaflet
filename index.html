@@ -67,8 +67,9 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet.control.layers.tree@1.1.0/L.Control.Layers.Tree.min.js"></script>
-    <!-- Include allCountries.js here -->
+    <!-- Include allCountries.js and allCapitals.js here -->
     <script src="./data/allCountries.js"></script>
+    <script src="./data/allCapitals.js"></script>
 
     <script>
         var map = L.map('map', {
@@ -102,49 +103,50 @@
 
         Stamen_Watercolor.addTo(map);
 
-        // Extract unique country names from allCountries
-        var allCountryNames = allCountries.features.map(function (feature) {
-            return feature.properties.name;
-        });
-
         // Array of countries you want to fill with red color
-        var selectedCountries = ['Afghanistan', 'Angola', 'Albania', 'United Kingdom']; // Add more countries as needed
+        var selectedCountries = ['Afghanistan', 'Angola', 'Albania', 'United Kingdom', 'Canada', 'India', 'Pakistan', 'Nepal', 'Australia', 'Brazil', 'United States of America', 'France', 'Germany', 'Turkey', 'South Africa', 'Zimbabwe', 'Egypt', 'Argentina', 'Russia', 'China']; // Add more countries as needed
 
-        var overlays = {
-            label: 'Highlights',
-            children: []
-        };
+        // Create a layer group for city markers
+        var cityMarkers = L.layerGroup().addTo(map);
 
         selectedCountries.forEach(function (country) {
-            // Create a filtered GeoJSON layer for each selected country
-            var countryLayer = L.geoJSON(allCountries, {
-                filter: function (feature, layer) {
-                    return feature.properties.name === country;
-                },
-                style: {
-                    fillColor: 'red',
-                    weight: 0,
-                    opacity: 1,
-                    color: 'white',
-                    dashArray: '3',
-                    fillOpacity: 0.7
-                }
+            // Find the GeoJSON feature for the selected country
+            var countryFeature = allCountries.features.find(function (feature) {
+                return feature.properties.name === country;
             });
 
-            overlays.children.push({ label: country, layer: countryLayer });
+            if (countryFeature) {
+                // Create a GeoJSON layer for the selected country and add it to the map
+                L.geoJSON(countryFeature, {
+                    style: {
+                        fillColor: 'red',
+                        weight: 0,
+                        opacity: 1,
+                        color: 'white',
+                        dashArray: '3',
+                        fillOpacity: 0.7
+                    }
+                }).addTo(map);
+            }
         });
 
-        var baseLayers = {
-            label: 'World &#x1f5fa;',
-            children: [
-                { label: 'Satellite', layer: googleSat },
-                { label: 'Google Map', layer: googleStreets },
-                { label: 'Water Color', layer: Stamen_Watercolor },
-                { label: 'OpenStreetMap', layer: osm }
-            ]
+        // Function to add city markers
+        function addCityMarker(country, city, coordinates) {
+            var marker = L.marker(coordinates.reverse())
+                .bindPopup('City: ' + city + '<br>Country: ' + country);
+            cityMarkers.addLayer(marker);
+            return marker;
+        }
+
+        // Example of adding city markers
+        var exampleMarker = addCityMarker('India', 'Delhi', [28.6139, 77.2090]);
+
+        // Add layer control for city markers
+        var overlayMaps = {
+            "City Markers": cityMarkers
         };
 
-        var layerControl = L.control.layers.tree(baseLayers, overlays).addTo(map);
+        L.control.layers(null, overlayMaps).addTo(map);
     </script>
 </body>
 

@@ -134,7 +134,7 @@
             'Zimbabwe': 'maroon',
             'Egypt': 'olive',
             'Argentina': 'navy',
-            'Russia': 'pink',
+            'Russia': 'coral',
             'China': 'gold'
         };
 
@@ -175,6 +175,21 @@
 
         // Create a layer group for city names
         var cityNamesLayer = L.layerGroup().addTo(map);
+
+        function styleCountry(feature) {
+            return {
+                fillColor: countryColors[feature.properties.name] || 'white',
+                weight: 1, // Add white border
+                color: 'black', // Border color
+                dashArray: '3',
+                fillOpacity: 0.4
+            };
+        }
+
+        // Create a GeoJSON layer for the country boundaries
+        var countryLayer = L.geoJSON(allCountries, {
+            style: styleCountry
+        }).addTo(map);
 
         // Function to add city markers
         function addCityMarker(country, city, coordinates) {
